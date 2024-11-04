@@ -1,6 +1,6 @@
 import json
 from typing import List
-from backend.Team import Team, Pot
+from backend.models.Team import Team, Pot  # Mise à jour de l'importation
 
 def load_teams_from_json(file_path: str) -> List[Pot]:
     with open(file_path, 'r', encoding='utf-8') as file:

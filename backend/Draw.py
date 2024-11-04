@@ -1,7 +1,7 @@
 import random
 import json
-from typing import List
-from backend.Team import Team, Pot
+from typing import List, Dict
+from backend.models.Team import Team, Pot  # Mise à jour du chemin d'importation
 
 class Draw:
     def __init__(self, pots: List[Pot]):
