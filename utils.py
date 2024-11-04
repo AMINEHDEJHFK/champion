@@ -1,23 +1,13 @@
 import json
-from enum import Enum
+from typing import List
+from backend.Team import Team, Pot
 
+def load_teams_from_json(file_path: str) -> List[Pot]:
+    with open(file_path, 'r', encoding='utf-8') as file:
+        teams_data = json.load(file)
 
-teams_path_json = "data/teams.json"
+    pots = {1: [], 2: [], 3: [], 4: []}
+    for team in teams_data:
+        pots[team['chapeau']].append(Team(team['nom'], team['pays']))
 
-tirages_path_json = "data/tirages.json"
-
-
-def load_json(path: str) -> any:
-    with open(path, "r") as file:
-        teams = json.load(file)
-    return teams
-
-
-HOME = "home"
-AWAY = "away"
-
-class MatchKey(Enum):
-    pot_1 = "pot_1"
-    pot_2 = "pot_2"
-    pot_3 = "pot_3"
-    pot_4 = "pot_4"
+    return [Pot(pot_number, teams) for pot_number, teams in pots.items()]

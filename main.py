@@ -1,18 +1,16 @@
-# Ce module contient les instances de vos classes back et front end.
 from backend.Draw import Draw
+from utils import load_teams_from_json
+from frontend.pdf import generate_pdf
 
-from utils import teams_path_json, load_json
+if __name__ == "__main__":
+    # Charger les équipes depuis le fichier JSON
+    pots = load_teams_from_json('data/teams.json')
 
-# load teams from json file
-json_teams = load_json(teams_path_json)
+    # Création du tirage
+    draw = Draw(pots)
+    draw.conduct_draw()
 
-# order teams by pots
-dict_pots = Draw.sort_teams_by_pots(json_teams)
+    # Générer le PDF avec les résultats
+    generate_pdf(draw.matches)
 
-# get list of pot
-list_pots = Draw.get_list_of_pots(dict_pots)
-
-draw = Draw(pots=list_pots)
-
-draw.make_draw()
-draw
+    print("Le fichier JSON et le fichier PDF ont été créés.")
