@@ -1,7 +1,7 @@
 import random
 import json
-from typing import List, Dict
-from backend.models.Team import Team, Pot  # Mise à jour du chemin d'importation
+from typing import List
+from backend.models.Team import Team, Pot
 
 class Draw:
     def __init__(self, pots: List[Pot]):
@@ -11,38 +11,40 @@ class Draw:
     def conduct_draw(self):
         for pot in self.pots:
             for team in pot.teams:
-                home_opponents = []
-                away_opponents = []
-                chosen_pots_home = set()
-                chosen_pots_away = set()
-
-                for other_pot in self.pots:
-                    if other_pot.pot_number != pot.pot_number:
-                        available_opponents = [
-                            opponent for opponent in other_pot.teams if opponent.pays != team.pays
-                        ]
-                        random.shuffle(available_opponents)
-
-                        # Ensure unique pot for each opponent
-                        if len(chosen_pots_home) < 4:
-                            for opponent in available_opponents:
-                                if other_pot.pot_number not in chosen_pots_home:
-                                    home_opponents.append(opponent)
-                                    chosen_pots_home.add(other_pot.pot_number)
-                                    break
-
-                        if len(chosen_pots_away) < 4:
-                            for opponent in available_opponents:
-                                if other_pot.pot_number not in chosen_pots_away:
-                                    away_opponents.append(opponent)
-                                    chosen_pots_away.add(other_pot.pot_number)
-                                    break
+                home_opponents = self._draw_opponents(team, avoid_team=team, is_home=True)
+                away_opponents = self._draw_opponents(team, avoid_team=team, is_home=False)
 
                 self.matches[team.nom] = {
                     'pot': pot.pot_number,
-                    'home': [{'nom': opponent.nom, 'pays': opponent.pays, 'pot': self.get_pot_number(opponent)} for opponent in home_opponents],
-                    'away': [{'nom': opponent.nom, 'pays': opponent.pays, 'pot': self.get_pot_number(opponent)} for opponent in away_opponents]
+                    'home': [{'nom': opp.nom, 'pays': opp.pays, 'pot': self.get_pot_number(opp)} for opp in home_opponents],
+                    'away': [{'nom': opp.nom, 'pays': opp.pays, 'pot': self.get_pot_number(opp)} for opp in away_opponents]
                 }
+
+    def _draw_opponents(self, team, avoid_team, is_home):
+    chosen_opponents = []
+    chosen_pots = set()
+
+    while len(chosen_opponents) < 4:
+        for other_pot in self.pots:
+            if other_pot.pot_number == self.get_pot_number(avoid_team) or other_pot.pot_number in chosen_pots:
+                continue
+
+            available_opponents = [
+                opp for opp in other_pot.teams
+                if opp.pays != team.pays and opp not in chosen_opponents
+            ]
+            random.shuffle(available_opponents)
+
+            if available_opponents:
+                chosen_opponents.append(available_opponents.pop())
+                chosen_pots.add(other_pot.pot_number)
+            else:
+                # Si aucun adversaire n'est disponible, tenter une autre configuration
+                chosen_opponents.clear()
+                chosen_pots.clear()
+                break
+
+        return chosen_opponents
 
     def get_pot_number(self, team: Team) -> int:
         for pot in self.pots:
