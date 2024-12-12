@@ -1,6 +1,10 @@
-venv
-*.pdf
-__pycache__
+.venv
+*/__pycache__
 .vscode
 samples.json
 analyse.txt
+token
+__pycache__
+notes.txt
+*.txt
+rules.pdf
