@@ -26,6 +26,8 @@ dict_pots = Draw.sort_teams_by_pots(json_teams.copy())
 # get list of pot
 list_pots = Draw.get_list_of_pots(dict_pots.copy())
 
+# create instance of draw 
 draw = Draw(pots=list_pots.copy())
 
+# run draw
 draw.make_draw()

@@ -1,18 +1,18 @@
 from typing import List, Dict
+import random 
+import json
 from backend.models.Pot import Pot
-import random
 from utils import HOME, AWAY, tirages_path_json
 from backend.models.Team import Team
 from backend.models.Pot import Pot
-import json
 
 
 class Draw:
 
     def __init__(self, pots: List[Pot]) -> None:
-        self.__pots = pots
-        self.__failed = 0
-        self.__pot_pass = []
+        self.__pots = pots # list of pots
+        self.__failed = 0 # count the number of fail draw 
+        self.__pot_pass = [] # content numbers of valid pot during the draw
 
     # ============== properties of instances ==============
 
